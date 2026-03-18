@@ -10,6 +10,7 @@ The dataset fits the requirements because it is a csv and contains 15,000 record
 https://www.kaggle.com/datasets/jayjoshi37/sleep-screen-time-and-stress-analysis/data
 
 ## Research Questions
+- Does a trend exist between quality of sleep and age?
 
 ## Members
 - Jeremiah Daniels - jbd22a
