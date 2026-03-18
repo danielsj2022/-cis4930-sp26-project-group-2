@@ -14,7 +14,7 @@ https://www.kaggle.com/datasets/jayjoshi37/sleep-screen-time-and-stress-analysis
 
 ## Members
 - Jeremiah Daniels - jbd22a
-- Zachary Bryant
+- Zachary Bryan
 - Kobus Vansteenburg
 - Ammiel Bowen
 
