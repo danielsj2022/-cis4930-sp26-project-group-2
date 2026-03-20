@@ -10,7 +10,10 @@ The dataset fits the requirements because it is a csv and contains 15,000 record
 https://www.kaggle.com/datasets/jayjoshi37/sleep-screen-time-and-stress-analysis/data
 
 ## Research Questions
-- Does a trend exist between quality of sleep and age?
+- Does a trend exist between quality of sleep quality and age?
+
+## Results
+- A direct correlation between sleep quality and age does not exist. Finding the average sleep quality score per age produced different values for each age. No trend was seen from the line plot.
 
 ## Members
 - Jeremiah Daniels - jbd22a
