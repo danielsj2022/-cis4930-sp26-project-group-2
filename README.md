@@ -16,6 +16,7 @@ https://www.kaggle.com/datasets/jayjoshi37/sleep-screen-time-and-stress-analysis
 ## Results
 - A direct correlation between sleep quality and age does not exist. Finding the average sleep quality score per age produced different values for each age. No trend was seen from the line plot.
 - When gathering the correlations of the numeric values and plotting them on a heatmap, correlation can be found between many numeric pairs. Relationships that had a strong positive correlation include: daily_screen_time_hours - stress_level and mental_fatigue_score - stress_level. This suggests that as screen time and mental fatigue increases, so does stress level. Relationships that had a strong negative correlation include: sleep_quality_score - stress_level and mental_fatigue_score - sleep_quality_score. This suggests an inverse relationship that as sleep quality increasses stress levels decrease as well as when mental fatigue increases a decrease occurs in sleep quality.
+- The scatter plot shows that the data points are widely dispersed, and the trend line appears relatively flat. This indicates that there is little to no strong relationship between sleep duration and stress levels in this dataset. In other words, individuals who sleep more do not consistently report lower stress levels, and those who sleep less are not always more stressed. Stress levels vary independently of sleep duration based on this visualization.
 
 ## Members
 - Jeremiah Daniels - jbd22a
