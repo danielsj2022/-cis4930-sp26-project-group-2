@@ -12,6 +12,7 @@ https://www.kaggle.com/datasets/jayjoshi37/sleep-screen-time-and-stress-analysis
 ## Research Questions
 - Does a trend exist between quality of sleep quality and age?
 - Does a trend exist between screen time and stress levels and does this change with age?
+- How does sleep duration impact stress levels?
   
 ## Results
 - A direct correlation between sleep quality and age does not exist. Finding the average sleep quality score per age produced different values for each age. No trend was seen from the line plot.
