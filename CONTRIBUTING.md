@@ -1,5 +1,5 @@
 Project Title: Real-World Data Storytelling
-Course: (Add course name)
+Course: CIS 4930
 Group Members:
 
 Member 1: Jeremiah Daniels
