@@ -15,10 +15,10 @@ Member 4: Ammiel Bowen
   Applying Functions:                                Zachary Bryan
 
 4.2 Data cleaning and transformation
-  Handle missing values:                             Ammiel Bowen
+  Handle missing values:                             Jeremiah Daniels
   Type conversion:                                   Zachary Bryan
   Grouping and aggregations:                         Kobus Vansteenburg
-  Simple reshaping:                                  Jeremiah Daniels
+  Simple reshaping:                                  Ammiel Bowen
 
 4.3 Visualization (matplotlib / seaborn)
   Line Plot:                                          Jeremiah Daniels
