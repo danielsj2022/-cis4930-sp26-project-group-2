@@ -1,4 +1,4 @@
-Workload breakdown:
-33% Jeremiah Daniels
-33% Kobus Vansteenburg
+Workload breakdown:\n
+33% Jeremiah Daniels\n
+33% Kobus Vansteenburg\n
 33% Zach Bryan
