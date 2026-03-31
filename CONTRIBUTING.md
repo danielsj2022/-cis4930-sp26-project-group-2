@@ -2,10 +2,10 @@ Project Title: Real-World Data Storytelling
 Course: (Add course name)
 Group Members:
 
-Member 1: (Name, ID)
-Member 2: (Name, ID)
-Member 3: (Name, ID)
-Member 4: (Name, ID)
+Member 1: Jeremiah Daniels
+Member 2: Kobus Vansteenburg
+Member 3: Zachary Bryan
+Member 4: Ammiel Bowen
 
 
 4.1 NumPy & pandas basics
