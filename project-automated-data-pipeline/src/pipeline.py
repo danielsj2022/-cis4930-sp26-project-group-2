@@ -7,21 +7,23 @@ from retry_requests import retry
 
 def main():
     multiple_city_weather_report = api_extract()
+    
 
-def api_extract() -> list[dict[str, any]]:
+def api_extract() -> dict[str, dict[str, any]]:
     cache_session = requests_cache.CachedSession('.cache', expire_after = 3600)
     retry_session = retry(cache_session, retries = 5, backoff_factor = 0.2)
     openmeteo = openmeteo_requests.Client(session = retry_session)
 
     locations = [
-        (30.4383, -84.2807),    #tallahassee
-        (32.7831, -96.8067),    #dallas
-        (40.7143, -74.006)      #new york
+        (30.4383, -84.2807, "tallahassee"),   
+        (32.7831, -96.8067, "dallas"),   
+        (40.7143, -74.006, "New York")      
     ]
     url = "https://api.open-meteo.com/v1/forecast"
-    all_items = []
+    #all_items = []
+    cities_forecast = {}
 
-    for lat, lon in locations:
+    for lat, lon, city in locations:
         params = {
             "latitude": lat,
             "longitude": lon,
@@ -39,12 +41,22 @@ def api_extract() -> list[dict[str, any]]:
         response = requests.get(url, params = params, timeout = 10)
         response.raise_for_status()
         data = response.json()
-        all_items.append(data)
+        #all_items.append(data)
 
-    # for d in all_items:
+        record = {
+            "current_temp": data.get("current", {}).get("temperature_2m", -999),
+            "seven_days": data.get("daily", {}).get("time", []),
+            "seven_day_hourly_temp": data.get("hourly", {}).get("temperature_2m", []),
+            "seven_day_daily_temp_max": data.get("daily", {}).get("temperature_2m_max", []),
+            "seven_day_daily_temp_min": data.get("daily", {}).get("temperature_2m_min", []),
+            "seven_day_precipitation_probability": data.get("daily", {}).get("precipitation_probability_max", [])
+        }
+        cities_forecast[city] = record
+
+    # for d in cities_forecast.values():
     #     print(d)
     #     print("----------------------------------------------")
-    return all_items
+    return cities_forecast
     
 
 if __name__ == "__main__":
