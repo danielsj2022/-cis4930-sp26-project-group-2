@@ -5,6 +5,7 @@ import requests_cache
 from datetime import datetime
 import os
 import json
+import sqlite3
 
 
 def main():
@@ -14,6 +15,7 @@ def main():
 
     df = transform_to_dataframe(data)
     save_to_csv(df)
+    save_to_sqlite(df)
 
 
 def api_extract():
@@ -98,11 +100,28 @@ def save_to_csv(df):
 
     print("7-day data saved.")
 
+def save_to_sqlite(df):
+    os.makedirs("data/processed", exist_ok=True)
+    db_path = "data/processed/weather_data.db"
+
+    conn = sqlite3.connect(db_path)
+
+    df.to_sql(
+        "weather",
+        conn,
+        if_exists="append",
+        index=False
+    )
+
+    conn.close()
+
+    print(f"Saved {len(df)} rows to SQLite.")
+
 
 if __name__ == "__main__":
     main()
 
-    """
+"""
     # Process 3 locations
 for response in responses:
 	print(f"\nCoordinates: {response.Latitude()}°N {response.Longitude()}°E")
@@ -152,4 +171,4 @@ for response in responses:
 	
 	daily_dataframe = pd.DataFrame(data = daily_data)
 	print("\nDaily data\n", daily_dataframe)
-    """
+"""
