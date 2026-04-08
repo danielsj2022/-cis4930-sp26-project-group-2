@@ -15,9 +15,8 @@ It gathers real-time weather forecasts for three different cities to see how wea
 https://open-meteo.com/
 
 ## Run Script
-### Install
-pip install openmeteo-requests
-pip install requests-cache retry-requests numpy pandas
+### Install 
+pip install requests-cache retry-requests numpy pandas  
 pip install requests
 ### Run
 python -m pipeline
