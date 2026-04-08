@@ -8,7 +8,8 @@ from retry_requests import retry
 def main():
     multiple_city_weather_report = api_extract()
     
-
+# Try and a mix up block
+# The except block
 def api_extract() -> dict[str, dict[str, any]]:
     cache_session = requests_cache.CachedSession('.cache', expire_after = 3600)
     retry_session = retry(cache_session, retries = 5, backoff_factor = 0.2)
@@ -37,6 +38,38 @@ def api_extract() -> dict[str, dict[str, any]]:
             # "per_page": 5,    open-meteo does not use pagination
             # "page": 1
         }
+        try:
+            response = retry_session.get(url, params=params, timeout=10)
+            print(f"{city} status code: {response.status_code}")
+
+            response.raise_for_status()
+            data = response.json()
+
+            record = {
+                "current_temp": data.get("current", {}).get("temperature_2m", -999),
+                "seven_days": data.get("daily", {}).get("time", []),
+                "seven_day_hourly_temp": data.get("hourly", {}).get("temperature_2m", []),
+                "seven_day_daily_temp_max": data.get("daily", {}).get("temperature_2m_max", []),
+                "seven_day_daily_temp_min": data.get("daily", {}).get("temperature_2m_min", []),
+                "seven_day_precipitation_probability": data.get("daily", {}).get("precipitation_probability_max", [])
+            }
+
+            cities_forecast[city] = record
+
+        except requests.exceptions.Timeout:
+            print(f"Request timed out for {city}. Skipping this city.")
+
+        except requests.exceptions.RequestException as e:
+            print(f"Request error for {city}: {e}")
+
+        except ValueError:
+            print(f"JSON decoding failed for {city}. Skipping this city.")
+
+    return cities_forecast
+    
+
+if __name__ == "__main__":
+    main()
 
         response = requests.get(url, params = params, timeout = 10)
         response.raise_for_status()
