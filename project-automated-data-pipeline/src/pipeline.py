@@ -7,6 +7,12 @@ from retry_requests import retry
 
 def main():
     multiple_city_weather_report = api_extract()
+
+    save_raw_json(data)
+
+    df = transform_to_dataframe(data)
+    save_to_csv(df)
+    save_to_sqlite(df)
     
 # Try and a mix up block
 # The except block
@@ -90,7 +96,56 @@ if __name__ == "__main__":
     #     print(d)
     #     print("----------------------------------------------")
     return cities_forecast
-    
+
+def save_raw_json(data):
+    os.makedirs("data/raw", exist_ok=True)
+    filename = f"data/raw/weather_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
+
+    with open(filename, "w") as f:
+        json.dump(data, f, indent=4)
+
+    print("Raw JSON saved.")
+
+def transform_to_dataframe(data):
+    rows = []
+
+    for city, info in data.items():
+        for i in range(len(info["dates"])):
+            rows.append({
+                "city": city,
+                "date": info["dates"][i],
+                "temp_max": info["temp_max"][i],
+                "temp_min": info["temp_min"][i],
+                "precip": info["precip"][i]
+            })    
+
+def save_to_csv(df):
+    os.makedirs("data/processed", exist_ok=True)
+    file_path = "data/processed/7day_weather.csv"
+
+    if os.path.exists(file_path):
+        df.to_csv(file_path, mode='a', header=False, index=False)
+    else:
+        df.to_csv(file_path, index=False)
+
+    print("7-day data saved.")
+
+def save_to_sqlite(df):
+    os.makedirs("data/processed", exist_ok=True)
+    db_path = "data/processed/weather_data.db"
+
+    conn = sqlite3.connect(db_path)
+
+    df.to_sql(
+        "weather",
+        conn,
+        if_exists="append",
+        index=False
+    )
+
+    conn.close()
+
+    print(f"Saved {len(df)} rows to SQLite.")
 
 if __name__ == "__main__":
     main()
