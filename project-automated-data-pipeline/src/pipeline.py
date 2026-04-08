@@ -1,96 +1,103 @@
 import requests
-import openmeteo_requests
-import requests_cache
 import pandas as pd
 from retry_requests import retry
+import requests_cache
+from datetime import datetime
+import os
+import json
 
 
 def main():
-    multiple_city_weather_report = api_extract()
-    
-# Try and a mix up block
-# The except block
-def api_extract() -> dict[str, dict[str, any]]:
-    cache_session = requests_cache.CachedSession('.cache', expire_after = 3600)
-    retry_session = retry(cache_session, retries = 5, backoff_factor = 0.2)
-    openmeteo = openmeteo_requests.Client(session = retry_session)
+    data = api_extract()
+
+    save_raw_json(data)
+
+    df = transform_to_dataframe(data)
+    save_to_csv(df)
+
+
+def api_extract():
+    cache_session = requests_cache.CachedSession('.cache', expire_after=3600)
+    retry_session = retry(cache_session, retries=3, backoff_factor=0.2)
 
     locations = [
-        (30.4383, -84.2807, "tallahassee"),   
-        (32.7831, -96.8067, "dallas"),   
-        (40.7143, -74.006, "New York")      
+        (30.4383, -84.2807, "tallahassee"),
+        (32.7831, -96.8067, "dallas"),
+        (40.7143, -74.0060, "new york")
     ]
+
     url = "https://api.open-meteo.com/v1/forecast"
-    #all_items = []
-    cities_forecast = {}
+    results = {}
 
     for lat, lon, city in locations:
         params = {
             "latitude": lat,
             "longitude": lon,
-            "daily": ["temperature_2m_max", "temperature_2m_min", "precipitation_probability_max"],
-            "hourly": "temperature_2m",
-            "current": "temperature_2m",
-            "timezone": "America/New_York",
-            "wind_speed_unit": "mph",
+            "daily": [
+                "temperature_2m_max",
+                "temperature_2m_min",
+                "precipitation_probability_max"
+            ],
             "temperature_unit": "fahrenheit",
-            "precipitation_unit": "inch",
-            # "per_page": 5,    open-meteo does not use pagination
-            # "page": 1
+            "timezone": "America/New_York"
         }
+
         try:
             response = retry_session.get(url, params=params, timeout=10)
-            print(f"{city} status code: {response.status_code}")
-
             response.raise_for_status()
             data = response.json()
 
-            record = {
-                "current_temp": data.get("current", {}).get("temperature_2m", -999),
-                "seven_days": data.get("daily", {}).get("time", []),
-                "seven_day_hourly_temp": data.get("hourly", {}).get("temperature_2m", []),
-                "seven_day_daily_temp_max": data.get("daily", {}).get("temperature_2m_max", []),
-                "seven_day_daily_temp_min": data.get("daily", {}).get("temperature_2m_min", []),
-                "seven_day_precipitation_probability": data.get("daily", {}).get("precipitation_probability_max", [])
+            results[city] = {
+                "city": city,
+                "dates": data.get("daily", {}).get("time", []),
+                "temp_max": data.get("daily", {}).get("temperature_2m_max", []),
+                "temp_min": data.get("daily", {}).get("temperature_2m_min", []),
+                "precip": data.get("daily", {}).get("precipitation_probability_max", [])
             }
 
-            cities_forecast[city] = record
-
-        except requests.exceptions.Timeout:
-            print(f"Request timed out for {city}. Skipping this city.")
-
         except requests.exceptions.RequestException as e:
-            print(f"Request error for {city}: {e}")
+            print(f"Error for {city}: {e}")
 
-        except ValueError:
-            print(f"JSON decoding failed for {city}. Skipping this city.")
+    return results
 
-    return cities_forecast
-    
 
-if __name__ == "__main__":
-    main()
+def save_raw_json(data):
+    os.makedirs("data/raw", exist_ok=True)
+    filename = f"data/raw/weather_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
 
-        response = requests.get(url, params = params, timeout = 10)
-        response.raise_for_status()
-        data = response.json()
-        #all_items.append(data)
+    with open(filename, "w") as f:
+        json.dump(data, f, indent=4)
 
-        record = {
-            "current_temp": data.get("current", {}).get("temperature_2m", -999),
-            "seven_days": data.get("daily", {}).get("time", []),
-            "seven_day_hourly_temp": data.get("hourly", {}).get("temperature_2m", []),
-            "seven_day_daily_temp_max": data.get("daily", {}).get("temperature_2m_max", []),
-            "seven_day_daily_temp_min": data.get("daily", {}).get("temperature_2m_min", []),
-            "seven_day_precipitation_probability": data.get("daily", {}).get("precipitation_probability_max", [])
-        }
-        cities_forecast[city] = record
+    print("Raw JSON saved.")
 
-    # for d in cities_forecast.values():
-    #     print(d)
-    #     print("----------------------------------------------")
-    return cities_forecast
-    
+
+def transform_to_dataframe(data):
+    rows = []
+
+    for city, info in data.items():
+        for i in range(len(info["dates"])):
+            rows.append({
+                "city": city,
+                "date": info["dates"][i],
+                "temp_max": info["temp_max"][i],
+                "temp_min": info["temp_min"][i],
+                "precip": info["precip"][i]
+            })
+
+    return pd.DataFrame(rows)
+
+
+def save_to_csv(df):
+    os.makedirs("data/processed", exist_ok=True)
+    file_path = "data/processed/7day_weather.csv"
+
+    if os.path.exists(file_path):
+        df.to_csv(file_path, mode='a', header=False, index=False)
+    else:
+        df.to_csv(file_path, index=False)
+
+    print("7-day data saved.")
+
 
 if __name__ == "__main__":
     main()
