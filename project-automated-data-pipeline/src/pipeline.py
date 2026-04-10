@@ -77,10 +77,10 @@ def api_extract() -> dict[str, dict[str, any]]:
     return cities_forecast
     
 
-def transform_to_dataframe(data): 
+def transform_to_dataframe(data: dict[str, dict[str, any]]) -> pd.DataFrame: 
         return pd.DataFrame.from_dict(data, orient='index')
 
-def save_to_csv(df):    
+def save_to_csv(df: pd.DataFrame) -> None:    
     os.makedirs("data/processed", exist_ok=True)
     file_path = "data/processed/7day_weather.csv"
 
@@ -91,7 +91,7 @@ def save_to_csv(df):
 
     print("7-day data saved.")
 
-def save_to_sqlite(df):
+def save_to_sqlite(df: pd.DataFrame) -> None:
     os.makedirs("data/processed", exist_ok=True)
     db_path = "data/processed/weather_data.db"
     conn = sqlite3.connect(db_path)
