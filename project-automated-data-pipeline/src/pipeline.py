@@ -127,7 +127,7 @@ def save_to_sqlite(df: pd.DataFrame) -> None:
     df.to_sql(
         "weather",
         conn,
-        if_exists="replace",  # CHANGED: replaces old table schema
+        if_exists="append",  # CHANGED: replaces old table schema
         index=False
     )
 
