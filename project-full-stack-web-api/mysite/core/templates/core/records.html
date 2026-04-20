@@ -1,0 +1,42 @@
+{% extends "core/base.html" %}
+{% block title %}Records{% endblock %}
+
+{% block content %}
+    <h1>Weather Records</h1>
+    {% if page_obj %}
+        <table border="1">
+            <tr>
+                <th>City</th>
+                <th>Date</th>
+                <th>Max Temp</th>
+                <th>Min Temp</th>
+                <th>Precipitation Probability</th>
+            </tr>
+            {% for record in page_obj %}
+            <tr>
+                <td>{{ record.city }}</td>
+                <td>{{ record.date }}</td>
+                <td>{{ record.temp_max }}</td>
+                <td>{{ record.temp_min }}</td>
+                <td>{{ record.precipitation }}%</td>
+            </tr>
+            {% endfor %}
+        </table>
+        <div>
+            {% if is_paginated %}
+                {% if page_obj.has_previous %}
+                    <a href="?page={{ page_obj.previous_page_number}}">Previous</a>            
+                {% endif %}
+                <span>Page {{ page_obj.number }}</span>
+
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number}}">Next</a>
+                {% endif %}
+            {% endif %}
+        </div>
+
+    {% else%}
+    <p>No records found.</p>
+    {% endif %}
+
+{% endblock %}
