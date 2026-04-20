@@ -18,10 +18,15 @@ Including another URLconf
 from core import views
 from django.contrib import admin
 from django.urls import path
-from core.views import RecordListView
+from core.views import RecordListView, RecordDetailView
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("", views.home, name="home"),
-    path("records/", RecordListView.as_view(), name="records"),
+    path("", views.home, name = "home"),
+    path("records/", RecordListView.as_view(), name = "records"),
+    path("records/<int:pk>/", RecordDetailView.as_view(), name = "record_detail"),
+
+    path("records/add/", views.create_record, name = "create_record"),
+    path("records/<int:pk>/edit/", views.update_record, name = "record_edit"),
+    path("records/<int:pk>/delete/", views.delete_record, name = "record_delete"),
 ]
