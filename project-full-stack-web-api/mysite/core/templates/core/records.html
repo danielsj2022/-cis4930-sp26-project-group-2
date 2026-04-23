@@ -3,6 +3,7 @@
 
 {% block content %}
     <h1>Weather Records</h1>
+    <p><a href="{% url 'create_record' %}">Create a new record</a></p>
     {% if page_obj %}
         <table border="1">
             <tr>
@@ -14,7 +15,10 @@
             </tr>
             {% for record in page_obj %}
             <tr>
-                <td>{{ record.city }}</td>
+                <a href="{% url 'record_detail' record.pk %}">
+                    <td>{{ record.city }}</td>
+                </a>
+                
                 <td>{{ record.date }}</td>
                 <td>{{ record.temp_max }}</td>
                 <td>{{ record.temp_min }}</td>

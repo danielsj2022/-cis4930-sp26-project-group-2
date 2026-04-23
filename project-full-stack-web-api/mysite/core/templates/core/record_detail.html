@@ -1,0 +1,15 @@
+{% extends "core/base.html" %}
+{% block title%}Record Detail{% endblock %}
+
+{% block content %}
+    <h1>Record Detail</h1>
+    <h2>{{ record.city }}</h2>
+    <p>Date: {{ record.date }}</p>
+    <p>Max Temp: {{ record.temp_max }}</p>
+    <p>Min Temp: {{ record.temp_min }}</p>
+    <p>Precipitation Probability: {{ record.precipitation }}%</p>
+
+    <a href="{% url 'record_edit' record.pk %}">Edit Record</a>
+    <a href="{% url 'record_delete' record.pk %}">Delete Record</a>
+    <a href="{% url 'records' %}">Back to Records</a>
+{% endblock %}
