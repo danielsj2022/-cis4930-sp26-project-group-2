@@ -86,6 +86,10 @@ Then open http://127.0.0.1:8000/ in your browser.
 
 ---
 
+## Video Link
+
+https://youtu.be/oqSBYoxfxt4
+
 ## Screenshots
 
 ### Homepage
