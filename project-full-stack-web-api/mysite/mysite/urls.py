@@ -29,4 +29,7 @@ urlpatterns = [
     path("records/add/", views.create_record, name = "create_record"),
     path("records/<int:pk>/edit/", views.update_record, name = "record_edit"),
     path("records/<int:pk>/delete/", views.delete_record, name = "record_delete"),
+
+    path("analytics/", views.analytics, name="analytics"),
+    path("fetch/", views.fetch_weather, name="fetch_weather"),
 ]

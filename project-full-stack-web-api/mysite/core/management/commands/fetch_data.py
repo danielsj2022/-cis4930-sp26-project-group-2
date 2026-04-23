@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand
 from django.db import transaction
 import requests
-from core.models import City, WeatherRecord
+from core.models import City, Record, DataRun
 
 
 CITIES = [
@@ -17,6 +17,8 @@ class Command(BaseCommand):
     help = 'Fetch 7-day weather forecast from Open-Meteo and save to database'
 
     def handle(self, *args, **options):
+        run = DataRun.objects.create(source='api')
+
         for city_info in CITIES:
             try:
                 resp = requests.get(
@@ -43,18 +45,12 @@ class Command(BaseCommand):
                 temp_min_list = daily.get('temperature_2m_min', [])
                 precip_list = daily.get('precipitation_probability_max', [])
 
-                city, _ = City.objects.get_or_create(
-                    name=city_info['name'],
-                    defaults={
-                        'latitude': city_info['lat'],
-                        'longitude': city_info['lon'],
-                    },
-                )
+                city, _ = City.objects.get_or_create(name=city_info['name'])
 
                 saved = 0
                 with transaction.atomic():
                     for i, date_str in enumerate(dates):
-                        _, created = WeatherRecord.objects.update_or_create(
+                        _, created = Record.objects.update_or_create(
                             city=city,
                             date=date_str,
                             defaults={
@@ -62,6 +58,7 @@ class Command(BaseCommand):
                                 'temp_min': temp_min_list[i] if i < len(temp_min_list) else 0,
                                 'precipitation': precip_list[i] if i < len(precip_list) else 0,
                                 'source': 'api',
+                                'run': run,
                             },
                         )
                         if created:

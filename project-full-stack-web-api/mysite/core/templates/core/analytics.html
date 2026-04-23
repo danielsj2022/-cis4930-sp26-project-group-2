@@ -1,18 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Analytics Dashboard</title>
-    <!-- Bootstrap and Chart.js loaded here as placeholder until Views lead creates base.html -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body>
+{% extends 'core/base.html' %}
 
-<!-- TODO (Views/Templates lead): wrap this in {% extends 'core/base.html' %} once base.html exists -->
+{% block title %}Analytics Dashboard{% endblock %}
 
-<div class="container py-4">
-
+{% block content %}
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h1 class="h2 mb-0">Analytics Dashboard</h1>
     {% if request.user.is_staff %}
@@ -27,8 +17,9 @@
 
 {% if no_data %}
 <div class="alert alert-warning">
-    No sleep records found in the database. Run
-    <code>python manage.py seed_data</code> to load the dataset.
+    No records found in the database. Run
+    <code>python manage.py seed_data</code> to load data,
+    or click <strong>Fetch Weather Data</strong> above.
 </div>
 {% else %}
 
@@ -45,80 +36,72 @@
     <div class="col-6 col-md-3">
         <div class="card text-center h-100">
             <div class="card-body">
-                <h6 class="card-title text-muted">Avg Sleep Duration</h6>
-                <p class="display-6 fw-bold mb-0">{{ summary.sleep_duration_hours.mean }}h</p>
+                <h6 class="card-title text-muted">Avg Max Temp (°F)</h6>
+                <p class="display-6 fw-bold mb-0">{{ summary.temp_max.mean }}</p>
             </div>
         </div>
     </div>
     <div class="col-6 col-md-3">
         <div class="card text-center h-100">
             <div class="card-body">
-                <h6 class="card-title text-muted">Avg Stress Level</h6>
-                <p class="display-6 fw-bold mb-0">{{ summary.stress_level.mean }}</p>
+                <h6 class="card-title text-muted">Avg Min Temp (°F)</h6>
+                <p class="display-6 fw-bold mb-0">{{ summary.temp_min.mean }}</p>
             </div>
         </div>
     </div>
     <div class="col-6 col-md-3">
         <div class="card text-center h-100">
             <div class="card-body">
-                <h6 class="card-title text-muted">Avg Sleep Quality</h6>
-                <p class="display-6 fw-bold mb-0">{{ summary.sleep_quality_score.mean }}</p>
+                <h6 class="card-title text-muted">Avg Precip (%)</h6>
+                <p class="display-6 fw-bold mb-0">{{ summary.precipitation.mean }}</p>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Row 1: Bar chart + Doughnut -->
+<!-- Row 1: Bar + Doughnut -->
 <div class="row g-4 mb-4">
     <div class="col-lg-8">
         <div class="card h-100">
-            <div class="card-header fw-semibold">
-                Sleep Quality Score by Age Group
-                <small class="text-muted fw-normal ms-2">— answers Project 1 Q1</small>
-            </div>
+            <div class="card-header fw-semibold">Avg Max Temperature by City (°F)</div>
             <div class="card-body">
-                <canvas id="qualityAgeChart"></canvas>
+                <canvas id="tempCityChart"></canvas>
             </div>
         </div>
     </div>
     <div class="col-lg-4">
         <div class="card h-100">
-            <div class="card-header fw-semibold">Records by Gender</div>
+            <div class="card-header fw-semibold">Records by Data Source</div>
             <div class="card-body d-flex align-items-center justify-content-center">
-                <canvas id="genderChart"></canvas>
+                <canvas id="sourceChart"></canvas>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Row 2: Stress vs Screen Time bar chart -->
+<!-- Row 2: Precipitation bar -->
 <div class="row g-4 mb-4">
     <div class="col-12">
         <div class="card">
-            <div class="card-header fw-semibold">
-                Avg Stress Level by Daily Screen Time
-                <small class="text-muted fw-normal ms-2">— answers Project 1 Q2</small>
-            </div>
+            <div class="card-header fw-semibold">Avg Precipitation Probability by City (%)</div>
             <div class="card-body">
-                <canvas id="stressScreenChart" style="max-height:280px;"></canvas>
+                <canvas id="precipCityChart" style="max-height:280px;"></canvas>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Row 3: Weather line chart (only shown after running fetch_data) -->
-{% if weather_chart %}
+<!-- Row 3: Line chart -->
 <div class="row g-4 mb-4">
     <div class="col-12">
         <div class="card">
-            <div class="card-header fw-semibold">7-Day Max Temperature by City (°F)</div>
+            <div class="card-header fw-semibold">Max Temperature Over Time by City (°F)</div>
             <div class="card-body">
                 <canvas id="weatherChart" style="max-height:280px;"></canvas>
             </div>
         </div>
     </div>
 </div>
-{% endif %}
 
 <!-- Summary Statistics Table -->
 <div class="row">
@@ -138,25 +121,25 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td>Sleep Duration (hours)</td>
-                            <td class="text-end">{{ summary.sleep_duration_hours.count }}</td>
-                            <td class="text-end">{{ summary.sleep_duration_hours.mean }}</td>
-                            <td class="text-end">{{ summary.sleep_duration_hours.min }}</td>
-                            <td class="text-end">{{ summary.sleep_duration_hours.max }}</td>
+                            <td>Max Temperature (°F)</td>
+                            <td class="text-end">{{ summary.temp_max.count }}</td>
+                            <td class="text-end">{{ summary.temp_max.mean }}</td>
+                            <td class="text-end">{{ summary.temp_max.min }}</td>
+                            <td class="text-end">{{ summary.temp_max.max }}</td>
                         </tr>
                         <tr>
-                            <td>Stress Level</td>
-                            <td class="text-end">{{ summary.stress_level.count }}</td>
-                            <td class="text-end">{{ summary.stress_level.mean }}</td>
-                            <td class="text-end">{{ summary.stress_level.min }}</td>
-                            <td class="text-end">{{ summary.stress_level.max }}</td>
+                            <td>Min Temperature (°F)</td>
+                            <td class="text-end">{{ summary.temp_min.count }}</td>
+                            <td class="text-end">{{ summary.temp_min.mean }}</td>
+                            <td class="text-end">{{ summary.temp_min.min }}</td>
+                            <td class="text-end">{{ summary.temp_min.max }}</td>
                         </tr>
                         <tr>
-                            <td>Sleep Quality Score</td>
-                            <td class="text-end">{{ summary.sleep_quality_score.count }}</td>
-                            <td class="text-end">{{ summary.sleep_quality_score.mean }}</td>
-                            <td class="text-end">{{ summary.sleep_quality_score.min }}</td>
-                            <td class="text-end">{{ summary.sleep_quality_score.max }}</td>
+                            <td>Precipitation Probability (%)</td>
+                            <td class="text-end">{{ summary.precipitation.count }}</td>
+                            <td class="text-end">{{ summary.precipitation.mean }}</td>
+                            <td class="text-end">{{ summary.precipitation.min }}</td>
+                            <td class="text-end">{{ summary.precipitation.max }}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -165,30 +148,57 @@
     </div>
 </div>
 
-{% endif %}
+<!-- Data passed to JS via JSON script tags to avoid linter conflicts with Django template tags -->
+<script type="application/json" id="temp-city-data">{{ temp_city_chart|safe }}</script>
+<script type="application/json" id="source-data">{{ source_chart|safe }}</script>
+<script type="application/json" id="precip-city-data">{{ precip_city_chart|safe }}</script>
+<script type="application/json" id="weather-data">{{ weather_chart|safe }}</script>
 
-</div><!-- /container -->
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
-{% if not no_data %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
 <script>
-const qualityAgeData   = {{ quality_age_chart|safe }};
-const genderData       = {{ gender_chart|safe }};
-const stressScreenData = {{ stress_screen_chart|safe }};
-{% if weather_chart %}
-const weatherData = {{ weather_chart|safe }};
-{% endif %}
+const tempCityData   = JSON.parse(document.getElementById('temp-city-data').textContent);
+const sourceData     = JSON.parse(document.getElementById('source-data').textContent);
+const precipCityData = JSON.parse(document.getElementById('precip-city-data').textContent);
+const weatherData    = JSON.parse(document.getElementById('weather-data').textContent);
 
-// Chart 1: Bar — Sleep Quality by Age Group
-new Chart(document.getElementById('qualityAgeChart'), {
+new Chart(document.getElementById('tempCityChart'), {
     type: 'bar',
     data: {
-        labels: qualityAgeData.labels,
+        labels: tempCityData.labels,
         datasets: [{
-            label: 'Avg Sleep Quality Score',
-            data: qualityAgeData.values,
+            label: 'Avg Max Temp (°F)',
+            data: tempCityData.values,
+            backgroundColor: 'rgba(255, 159, 64, 0.7)',
+            borderColor: 'rgba(255, 159, 64, 1)',
+            borderWidth: 1,
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: { y: { beginAtZero: false, title: { display: true, text: 'Temperature (°F)' } } }
+    }
+});
+
+new Chart(document.getElementById('sourceChart'), {
+    type: 'doughnut',
+    data: {
+        labels: sourceData.labels,
+        datasets: [{
+            data: sourceData.values,
+            backgroundColor: ['rgba(54, 162, 235, 0.7)', 'rgba(255, 99, 132, 0.7)'],
+        }]
+    },
+    options: { responsive: true }
+});
+
+new Chart(document.getElementById('precipCityChart'), {
+    type: 'bar',
+    data: {
+        labels: precipCityData.labels,
+        datasets: [{
+            label: 'Avg Precipitation Probability (%)',
+            data: precipCityData.values,
             backgroundColor: 'rgba(54, 162, 235, 0.7)',
             borderColor: 'rgba(54, 162, 235, 1)',
             borderWidth: 1,
@@ -197,76 +207,32 @@ new Chart(document.getElementById('qualityAgeChart'), {
     options: {
         responsive: true,
         plugins: { legend: { display: false } },
-        scales: { y: { beginAtZero: false, title: { display: true, text: 'Avg Quality Score' } } }
+        scales: { y: { beginAtZero: true, title: { display: true, text: 'Probability (%)' } } }
     }
 });
 
-// Chart 2: Doughnut — Gender Distribution
-new Chart(document.getElementById('genderChart'), {
-    type: 'doughnut',
-    data: {
-        labels: genderData.labels,
-        datasets: [{
-            data: genderData.values,
-            backgroundColor: [
-                'rgba(255, 99, 132, 0.7)',
-                'rgba(54, 162, 235, 0.7)',
-                'rgba(255, 206, 86, 0.7)',
-            ],
-        }]
-    },
-    options: { responsive: true }
-});
-
-// Chart 3: Bar — Stress Level by Screen Time
-new Chart(document.getElementById('stressScreenChart'), {
-    type: 'bar',
-    data: {
-        labels: stressScreenData.labels,
-        datasets: [{
-            label: 'Avg Stress Level',
-            data: stressScreenData.values,
-            backgroundColor: 'rgba(255, 99, 132, 0.7)',
-            borderColor: 'rgba(255, 99, 132, 1)',
-            borderWidth: 1,
-        }]
-    },
-    options: {
-        responsive: true,
-        plugins: { legend: { display: false } },
-        scales: { y: { beginAtZero: false, title: { display: true, text: 'Avg Stress Level' } } }
-    }
-});
-
-{% if weather_chart %}
-// Chart 4: Line — 7-Day Max Temp by City
-const CITY_COLORS = [
-    'rgba(75, 192, 192, 1)',
-    'rgba(255, 159, 64, 1)',
-    'rgba(153, 102, 255, 1)',
-];
+const CITY_COLORS = ['rgba(75,192,192,1)', 'rgba(255,159,64,1)', 'rgba(153,102,255,1)'];
 new Chart(document.getElementById('weatherChart'), {
     type: 'line',
     data: {
         labels: weatherData.labels,
-        datasets: weatherData.datasets.map((ds, i) => ({
-            ...ds,
-            borderColor: CITY_COLORS[i % CITY_COLORS.length],
-            backgroundColor: 'transparent',
-            pointBackgroundColor: CITY_COLORS[i % CITY_COLORS.length],
-            tension: 0.3,
-        }))
+        datasets: weatherData.datasets.map(function(ds, i) {
+            return {
+                label: ds.label,
+                data: ds.data,
+                borderColor: CITY_COLORS[i % CITY_COLORS.length],
+                backgroundColor: 'transparent',
+                pointBackgroundColor: CITY_COLORS[i % CITY_COLORS.length],
+                tension: 0.3,
+            };
+        })
     },
     options: {
         responsive: true,
-        scales: {
-            y: { title: { display: true, text: 'Temperature (°F)' } }
-        }
+        scales: { y: { title: { display: true, text: 'Temperature (°F)' } } }
     }
 });
-{% endif %}
 </script>
-{% endif %}
 
-</body>
-</html>
+{% endif %}
+{% endblock %}
