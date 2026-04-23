@@ -1,14 +1,19 @@
-<<<<<<< HEAD
 import json
 import pandas as pd
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
 from django.views.decorators.http import require_POST
 from django.core.management import call_command
-from .models import SleepRecord, WeatherRecord
+#from .models import SleepRecord, WeatherRecord, Record
+#from django.shortcuts import render, redirect, 
+from django.http import HttpResponse
+from django.core.paginator import Paginator
+from django.views.generic import ListView, DetailView
+from .forms import RecordForm
+from .models import Record
 
-
+"""
 def analytics(request):
     qs = SleepRecord.objects.values(
         'age', 'gender',
@@ -108,13 +113,7 @@ def fetch_weather(request):
     except Exception as e:
         messages.error(request, f'Fetch failed: {e}')
     return redirect('analytics')
-=======
-from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpResponse
-from django.core.paginator import Paginator
-from django.views.generic import ListView, DetailView
-from .forms import RecordForm
-from django.contrib import messages
+"""
 
 # Create your views here.
 def home(request):
@@ -132,7 +131,7 @@ def create_record(request):
     else:
         form = RecordForm() #show empty form
 
-    return render(request, "core/create_record.html", {"form": form})   #render form with errors if form is invalid
+    return render(request, "core/record_form.html", {"form": form})   #render form with errors if form is invalid
 
 def update_record(request, pk):
     record = get_object_or_404(Record, pk=pk)    #model needed
@@ -169,26 +168,26 @@ def delete_record(request, pk):
 
 class RecordListView(ListView):
     paginate_by = 20
-    # model = Record  # Assuming you have a Record model defined in your models.py
+    model = Record  # Assuming you have a Record model defined in your models.py
     template_name = "core/records.html"
 
-    def get_queryset(self):
-        return [
-            {"id": 1, "city": "tallahassee", "date": "2026-04-19", "temp_max": 75.7, "temp_min": 57.9, "precipitation": 9},
-            {"id": 2, "city": "tallahassee", "date": "2026-04-20", "temp_max": 79.9, "temp_min": 50.9, "precipitation": 0},
-            {"id": 3, "city": "tallahassee", "date": "2026-04-21", "temp_max": 83.7, "temp_min": 52.5, "precipitation": 0},
-            {"id": 4, "city": "tallahassee", "date": "2026-04-22", "temp_max": 83.9, "temp_min": 57.2, "precipitation": 0},
-            {"id": 5, "city": "tallahassee", "date": "2026-04-23", "temp_max": 86.4, "temp_min": 56.0, "precipitation": 1},
-            {"id": 6, "city": "tallahassee", "date": "2026-04-24", "temp_max": 84.8, "temp_min": 58.7, "precipitation": 5},
-            {"id": 7, "city": "tallahassee", "date": "2026-04-25", "temp_max": 88.4, "temp_min": 60.1, "precipitation": 26},
-            {"id": 8, "city": "tallahassee", "date": "2026-04-19", "temp_max": 75.7, "temp_min": 57.9, "precipitation": 9},
-            {"id": 9, "city": "tallahassee", "date": "2026-04-20", "temp_max": 79.9, "temp_min": 50.9, "precipitation": 0},
-            {"id": 10, "city": "tallahassee", "date": "2026-04-21", "temp_max": 83.7, "temp_min": 52.5, "precipitation": 0},
-            {"id": 11, "city": "tallahassee", "date": "2026-04-22", "temp_max": 83.9, "temp_min": 57.2, "precipitation": 0},
-            {"id": 12, "city": "tallahassee", "date": "2026-04-23", "temp_max": 86.4, "temp_min": 56.0, "precipitation": 1},
-            {"id": 13, "city": "tallahassee", "date": "2026-04-24", "temp_max": 84.8, "temp_min": 58.7, "precipitation": 5},
-            {"id": 14, "city": "tallahassee", "date": "2026-04-25", "temp_max": 88.4, "temp_min": 60.1, "precipitation": 26},
-        ]
+    # def get_queryset(self):
+    #     return [
+    #         {"id": 1, "city": "tallahassee", "date": "2026-04-19", "temp_max": 75.7, "temp_min": 57.9, "precipitation": 9},
+    #         {"id": 2, "city": "tallahassee", "date": "2026-04-20", "temp_max": 79.9, "temp_min": 50.9, "precipitation": 0},
+    #         {"id": 3, "city": "tallahassee", "date": "2026-04-21", "temp_max": 83.7, "temp_min": 52.5, "precipitation": 0},
+    #         {"id": 4, "city": "tallahassee", "date": "2026-04-22", "temp_max": 83.9, "temp_min": 57.2, "precipitation": 0},
+    #         {"id": 5, "city": "tallahassee", "date": "2026-04-23", "temp_max": 86.4, "temp_min": 56.0, "precipitation": 1},
+    #         {"id": 6, "city": "tallahassee", "date": "2026-04-24", "temp_max": 84.8, "temp_min": 58.7, "precipitation": 5},
+    #         {"id": 7, "city": "tallahassee", "date": "2026-04-25", "temp_max": 88.4, "temp_min": 60.1, "precipitation": 26},
+    #         {"id": 8, "city": "tallahassee", "date": "2026-04-19", "temp_max": 75.7, "temp_min": 57.9, "precipitation": 9},
+    #         {"id": 9, "city": "tallahassee", "date": "2026-04-20", "temp_max": 79.9, "temp_min": 50.9, "precipitation": 0},
+    #         {"id": 10, "city": "tallahassee", "date": "2026-04-21", "temp_max": 83.7, "temp_min": 52.5, "precipitation": 0},
+    #         {"id": 11, "city": "tallahassee", "date": "2026-04-22", "temp_max": 83.9, "temp_min": 57.2, "precipitation": 0},
+    #         {"id": 12, "city": "tallahassee", "date": "2026-04-23", "temp_max": 86.4, "temp_min": 56.0, "precipitation": 1},
+    #         {"id": 13, "city": "tallahassee", "date": "2026-04-24", "temp_max": 84.8, "temp_min": 58.7, "precipitation": 5},
+    #         {"id": 14, "city": "tallahassee", "date": "2026-04-25", "temp_max": 88.4, "temp_min": 60.1, "precipitation": 26},
+    #     ]
 
 class RecordDetailView(DetailView):
     # model = Record  # Assuming you have a Record model defined in your models.py

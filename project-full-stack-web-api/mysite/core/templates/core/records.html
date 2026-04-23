@@ -3,7 +3,7 @@
 
 {% block content %}
     <h1>Weather Records</h1>
-    <p><a href="{ url 'create_record' }">Create a new record</a></p>
+    <p><a href="{% url 'create_record' %}">Create a new record</a></p>
     {% if page_obj %}
         <table border="1">
             <tr>
