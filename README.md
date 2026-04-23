@@ -48,23 +48,41 @@ This project explores the relationship between smartphone usage, sleep quality, 
 git clone https://github.com/ufl-cis4930/cis4930-sp26-project-group-2.git
 cd cis4930-sp26-project-group-2
 
-# 2. Install dependencies
+# 2. Create and activate a virtual environment
+python -m venv venv
+
+# On Windows:
+venv\Scripts\activate
+# On Mac/Linux:
+source venv/bin/activate
+
+# 3. Install dependencies
 pip install -r requirements.txt
 
-# 3. Navigate to the Django project
+# 4. Navigate to the Django project
 cd project-full-stack-web-api/mysite
 
-# 4. Apply migrations
+# 5. Apply migrations
 python manage.py migrate
 
-# 5. Seed the database with weather data from the Open-Meteo API
+# 6. Seed the database
+python manage.py seed_data
+
+# 7. (Optional) Fetch live weather data from the Open-Meteo API
 python manage.py fetch_data
 
-# 6. Start the development server
+# 8. Create an admin account
+python manage.py createsuperuser
+# You will be prompted to enter a username, email , and password.
+
+# 9. Start the development server
 python manage.py runserver
 ```
 
 Then open http://127.0.0.1:8000/ in your browser.
+
+- Admin panel: http://127.0.0.1:8000/admin/ — log in with the superuser credentials you created above
+- The **Fetch Weather Data** button on the analytics page is only visible when logged in as a staff/admin user
 
 ---
 
