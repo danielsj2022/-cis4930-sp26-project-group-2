@@ -112,7 +112,7 @@ def update_record(request, pk):
             return redirect("record_detail", pk = record.pk)
     else:
         form = RecordForm(instance=record) #show form with existing data
-        return render(request, "core/create_record.html", {"form": form})   #render form with errors if form is invalid
+        return render(request, "core/record_form.html", {"form": form})   #render form with errors if form is invalid
 
 def delete_record(request, pk):
     record = get_object_or_404(Record, pk = pk)  #model needed  
@@ -159,6 +159,6 @@ class RecordListView(ListView):
     #     ]
 
 class RecordDetailView(DetailView):
-    # model = Record  # Assuming you have a Record model defined in your models.py
+    model = Record
     template_name = "core/record_detail.html"
     context_object_name = "record"
