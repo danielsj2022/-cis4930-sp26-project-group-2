@@ -25,4 +25,11 @@ https://www.kaggle.com/datasets/jayjoshi37/sleep-screen-time-and-stress-analysis
 - Kobus Vansteenburg - kmv21a
 - Ammiel Bowen - ab22dv
 
-
+## Real World Project Storytelling
+- Zachary Bryan 
+    - Built scatter plot with hue='gender' to reveal gender-based differences and alpha=0.4
+    - Overlaid regression trend line using scatter=False so no duplication occurs
+    - Chose 'Set2' for palette and dashed black line for clarity
+- Ammiel Bowen 
+    - Filtered out invalid stress level values, keeping only range 1<x>10 to remove boundary outliers distorting trend line
+    - Created 1,000-row sample using random_state=42 so results are consistent across every run
