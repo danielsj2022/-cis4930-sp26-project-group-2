@@ -1,0 +1,96 @@
+/* WeatherWatch — custom style overrides */
+
+/* 1. Navbar brand: larger tracking and custom font weight */
+.site-brand {
+    font-size: 1.35rem;
+    letter-spacing: 0.04em;
+    font-weight: 700;
+}
+
+/* 2. Card: smooth hover lift with transition */
+.card {
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+    border-radius: 0.6rem;
+}
+
+.feature-card:hover,
+.hero-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.12) !important;
+}
+
+/* 3. Feature icon: fixed-size centered circle */
+.feature-icon {
+    width: 56px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* 4. Table: tighter header padding and uppercase labels */
+.table thead th {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 0.65rem 0.85rem;
+}
+
+/* 5. Pagination: pill-shaped links */
+.pagination .page-link {
+    border-radius: 0.4rem;
+    margin: 0 2px;
+    padding: 0.4rem 0.85rem;
+    font-size: 0.875rem;
+}
+
+/* 6. Footer: gradient background and top border */
+.site-footer {
+    background: linear-gradient(90deg, #0d6efd 0%, #0a58ca 100%);
+    border-top: 3px solid rgba(255, 255, 255, 0.15);
+    font-size: 0.85rem;
+    letter-spacing: 0.02em;
+}
+
+/* 7. Form container centering — applied via the col layout in templates,
+   but this ensures inputs have consistent height and padding */
+.form-control,
+.form-select {
+    padding: 0.5rem 0.85rem;
+    font-size: 0.95rem;
+    border-radius: 0.4rem;
+}
+
+.form-control:focus,
+.form-select:focus {
+    box-shadow: 0 0 0 0.22rem rgba(13, 110, 253, 0.22);
+}
+
+/* 8. Primary button: subtle shadow lift on hover */
+.btn-primary {
+    box-shadow: 0 2px 6px rgba(13, 110, 253, 0.3);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(13, 110, 253, 0.4);
+}
+
+/* 9. Analytics stat cards: display number color emphasis */
+.display-6 {
+    font-size: 2rem;
+}
+
+/* 10. Main container: minimum viewport height so footer stays at bottom */
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: #f8f9fa;
+}
+
+main.container {
+    flex: 1;
+}

@@ -1,15 +1,47 @@
 {% extends "core/base.html" %}
-{% block title%}Record Detail{% endblock %}
+{% block title %}{{ record.city }} &mdash; {{ record.date }}{% endblock %}
 
 {% block content %}
-    <h1>Record Detail</h1>
-    <h2>{{ record.city }}</h2>
-    <p>Date: {{ record.date }}</p>
-    <p>Max Temp: {{ record.temp_max }}</p>
-    <p>Min Temp: {{ record.temp_min }}</p>
-    <p>Precipitation Probability: {{ record.precipitation }}%</p>
+<div class="mb-3">
+    <a href="{% url 'records' %}" class="text-decoration-none text-muted small">&larr; Back to Records</a>
+</div>
 
-    <a href="{% url 'record_edit' record.pk %}">Edit Record</a>
-    <a href="{% url 'record_delete' record.pk %}">Delete Record</a>
-    <a href="{% url 'records' %}">Back to Records</a>
+<div class="row justify-content-center">
+    <div class="col-lg-6 col-md-8">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-transparent border-bottom py-3 d-flex justify-content-between align-items-center">
+                <span class="fw-semibold">Record Detail</span>
+                <span class="badge bg-secondary">{{ record.source|upper }}</span>
+            </div>
+            <div class="card-body p-4">
+                <h2 class="h4 fw-bold mb-1">{{ record.city }}</h2>
+                <p class="text-muted small mb-4">{{ record.date }}</p>
+
+                <dl class="row mb-0">
+                    <dt class="col-sm-6 text-muted fw-normal">Max Temperature</dt>
+                    <dd class="col-sm-6 fw-semibold">{{ record.temp_max }}&deg;F</dd>
+
+                    <dt class="col-sm-6 text-muted fw-normal">Min Temperature</dt>
+                    <dd class="col-sm-6 fw-semibold">{{ record.temp_min }}&deg;F</dd>
+
+                    <dt class="col-sm-6 text-muted fw-normal">Precipitation Probability</dt>
+                    <dd class="col-sm-6 fw-semibold">{{ record.precipitation }}%</dd>
+
+                    <dt class="col-sm-6 text-muted fw-normal">Data Source</dt>
+                    <dd class="col-sm-6">
+                        {% if record.source == 'csv' %}
+                        <span class="badge bg-info text-dark">CSV Import</span>
+                        {% else %}
+                        <span class="badge bg-success">API Fetch</span>
+                        {% endif %}
+                    </dd>
+                </dl>
+            </div>
+            <div class="card-footer bg-transparent border-top d-flex gap-2 py-3">
+                <a href="{% url 'record_edit' record.pk %}" class="btn btn-primary btn-sm">Edit</a>
+                <a href="{% url 'record_delete' record.pk %}" class="btn btn-outline-danger btn-sm">Delete</a>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
